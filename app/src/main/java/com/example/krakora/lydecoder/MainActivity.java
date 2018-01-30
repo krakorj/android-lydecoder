@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
                 // Hide keyboards
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                 // Process decoding
-                Decoder d = new Decoder(passText.getText().toString());
-                String output = d.decode(codeText.getText().toString());
+                Decoder d = new Decoder(codeText.getText().toString(), passText.getText().toString());
+                String output = d.decode();
                 // Present it
                 Snackbar.make(view, "Button clicked, process ..." + output + " done!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();

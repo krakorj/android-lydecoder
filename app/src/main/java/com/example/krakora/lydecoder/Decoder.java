@@ -6,12 +6,20 @@ package com.example.krakora.lydecoder;
 
 public class Decoder {
 
-    public Decoder(String password) {
-        //
+    public String code;
+    public String password;
+
+    public Decoder(String code, String password) {
+        this.code = code;
+        this.password = password;
+        // TODO: Open decrypted CSV file, https://www.callicoder.com/java-read-write-csv-file-apache-commons-csv/
+        // TODO: Encrypt the the CSV file => f(password), https://stackoverflow.com/a/22695880 
+        // TODO: Read the CSV content
+        // TODO: Provide data to user
     }
 
-    public String decode(String input) {
-        String[] x = input.split(",");
+    public String decode() {
+        String[] x = this.code.split(",");
         int[] code = {0, 0};
         try {
             code[0] = Integer.parseInt(x[0]);
