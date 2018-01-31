@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Hide keyboards
+                // Hide keyboard
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                 // Process decoding
                 Decoder d = new Decoder(codeText.getText().toString(), passText.getText().toString());
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 // Present it
                 Snackbar.make(view, "Button clicked, process ..." + output + " done!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                outputText.setText("Shake it " + output + " :)");
+                outputText.setText(output);
             }
             }
         );
