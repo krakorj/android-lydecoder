@@ -28,5 +28,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     // CSV reader
-    compile 'org.apache.commons:commons-csv:1.5'
+    implementation 'org.apache.commons:commons-csv:1.5'
+    implementation 'commons-io:commons-io:2.6'
 }

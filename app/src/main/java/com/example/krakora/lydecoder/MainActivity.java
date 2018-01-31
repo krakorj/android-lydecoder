@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.io.InputStream;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -53,8 +55,14 @@ public class MainActivity extends AppCompatActivity {
                 // Hide keyboard
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                 // Process decoding
-                Decoder d = new Decoder(codeText.getText().toString(), passText.getText().toString());
-                String output = d.decode();
+                String output = ".";
+                try {
+                    InputStream ins = getAssets().open("data.csv");
+                    Decoder d = new Decoder(codeText.getText().toString(), passText.getText().toString(), ins);
+                    output = d.decode();
+                } catch (Exception e) {
+                    // pass
+                }
                 // Present it
                 Snackbar.make(view, "Button clicked, process ..." + output + " done!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();

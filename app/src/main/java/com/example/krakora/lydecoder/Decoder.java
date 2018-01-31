@@ -1,18 +1,18 @@
 package com.example.krakora.lydecoder;
 
-import android.provider.Settings;
 import android.util.Log;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.IOUtils;
 
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Created by KRAKORA on 30.01.2018.
@@ -23,9 +23,9 @@ public class Decoder {
     public int[] ids;
     public String password;
     public String code;
-    private String[] MASQUERADE_CODE = {"N1C", "VOE"};
+    private String[] MASQUERADE_CODE = {"N1C", "1MT"};
 
-    public Decoder(String text, String password) {
+    public Decoder(String text, String password, InputStream file) {
         // Map attributes
         try {
             this.ids = this.parseIds(text);
@@ -37,22 +37,28 @@ public class Decoder {
             return;
         }
         this.password = password;
+
         // TODO: Open decrypted CSV file
-        //new FileReader("yourfile.csv")
+        String data = "";
+        try {
+            StringWriter writer = new StringWriter();
+            IOUtils.copy(file, writer, StandardCharsets.UTF_8);
+            data = writer.toString();
+        } catch (Exception e) {
+            // Log
+            Log.d("LyDecoder", e.getMessage());
+            // Make masquerade
+            this.code = this.codePresenter(this.getMasqueradeCode());
+            return;
+        }
+
         // TODO: Encrypt the CSV file => f(password), https://stackoverflow.com/a/22695880
-        String data = "id,code\r\n" +
-                "1,ABC\r\n" +
-                "2,BBC\r\n" +
-                "3,CBC\r\n" +
-                "4,DBC\r\n" +
-                "5,EBC\r\n" +
-                "6,FBC\r\n" +
-                "7,GBC";
-        Reader in = new StringReader(data);
+
         // Read the CSV content - https://stackoverflow.com/a/43055945
+        Reader in = new StringReader(data);
         try {
             // Parse CSV
-            CSVParser parser = new CSVParser(in, CSVFormat.RFC4180);
+            CSVParser parser = new CSVParser(in, CSVFormat.RFC4180.withDelimiter(';'));
             List<CSVRecord> list = parser.getRecords();
             Log.d("LyDecoder", "CSV data parsed");
             // Get Codes
