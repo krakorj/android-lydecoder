@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // Process ring button
-        // TODO: Remove ring button
+        // TODO: Ring button is obsolete in the application
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,12 +52,12 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Hide keyboard
+                // Hide keyboards
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                // Process decoding
+                // Process file decoding
                 String output = ".";
                 try {
-                    InputStream ins = getAssets().open("data.csv");
+                    InputStream ins = getAssets().open("data.enc");
                     Decoder d = new Decoder(codeText.getText().toString(), passText.getText().toString(), ins);
                     output = d.decode();
                 } catch (Exception e) {

@@ -6,8 +6,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -38,29 +40,33 @@ public class Decoder {
         }
         this.password = password;
 
-        // TODO: Open decrypted CSV file
+        // Open encrypted CSV file
         String data = "";
         try {
+            // Open file
+            Log.d("LyDecoder", "Opening the decripted file ...");
             StringWriter writer = new StringWriter();
             IOUtils.copy(file, writer, StandardCharsets.UTF_8);
-            data = writer.toString();
+            String input = writer.toString();
+            // Decrypt
+            // https://stackoverflow.com/questions/44497058/issue-with-key-and-iv-on-aes-256-cbc
+            Log.d("LyDecoder", "Decrypting the file ...");
+            data = Aes.decrypt(input, this.password);
+            // TODO: Check if the AES output is in CSV format
+            // if not valid format throw an exception
         } catch (Exception e) {
-            // Log
             Log.d("LyDecoder", e.getMessage());
             // Make masquerade
             this.code = this.codePresenter(this.getMasqueradeCode());
             return;
         }
-
-        // TODO: Encrypt the CSV file => f(password), https://stackoverflow.com/a/22695880
-
         // Read the CSV content - https://stackoverflow.com/a/43055945
         Reader in = new StringReader(data);
         try {
             // Parse CSV
-            CSVParser parser = new CSVParser(in, CSVFormat.RFC4180.withDelimiter(';'));
+            Log.d("LyDecoder", "CSV file processing ...");
+            CSVParser parser = new CSVParser(in, CSVFormat.RFC4180.withDelimiter(';').withRecordSeparator('\n'));
             List<CSVRecord> list = parser.getRecords();
-            Log.d("LyDecoder", "CSV data parsed");
             // Get Codes
             String[] codes = this.getCodes(list);
             // Ready to use
@@ -114,12 +120,12 @@ public class Decoder {
                 if(id == this.ids[1]) { code[1] = i.get(1); };
             } catch (Exception e) {
                 // Id is not integer - exception
-                throw new Exception("CSV IDs invalid!");
+                throw new Exception("CSV invalid!");
             }
         }
         // Validate output
         if ( code[0].equals("") || code[1].equals("")) {
-            throw new Exception("IDs invalid!");
+            throw new Exception("Input IDs invalid!");
         }
         // Return codes
         return code;
