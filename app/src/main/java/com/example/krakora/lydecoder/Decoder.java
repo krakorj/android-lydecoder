@@ -14,6 +14,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.List;
 
 /**
@@ -83,7 +84,7 @@ public class Decoder {
     }
 
     public String codePresenter(String[] codes) {
-        return codes[0] + "|" + codes[1];
+        return codes[0] + "" + codes[1];
     }
 
     private int[] parseIds(String text) throws Exception {
@@ -99,7 +100,19 @@ public class Decoder {
     }
 
     private String[] getMasqueradeCode() {
-        return MASQUERADE_CODE;
+        String[] code = {"",""};
+        code[0] = MASQUERADE_CODE[0];
+        code[1] = this.getRandomString();
+        return code;
+    }
+
+    private String getRandomString() {
+        String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        SecureRandom rnd = new SecureRandom();
+        StringBuilder sb = new StringBuilder( 3 );
+        for( int i = 0; i < 3; i++ )
+            sb.append( CHARS.charAt( rnd.nextInt(CHARS.length()) ) );
+        return sb.toString();
     }
 
     private String[] getCodes(List<CSVRecord> list) throws Exception {
@@ -109,23 +122,27 @@ public class Decoder {
         // Assign codes from CSV to ids
         int id = 0;
         for (CSVRecord i : list) {
-            // Ignore header
-            if (i.get(0).trim().equals("id")) { continue; };
             // Get id from CSV
             try {
                 // Get ID
                 id = Integer.parseInt(i.get(0));
-                // Check code 1
+                // Check code values
                 if(id == this.ids[0]) { code[0] = i.get(1); };
                 if(id == this.ids[1]) { code[1] = i.get(1); };
+                // Check codes filled
+                if(!code[0].equals("") && !code[1].equals("")) {
+                    break;
+                }
             } catch (Exception e) {
-                // Id is not integer - exception
-                throw new Exception("CSV invalid!");
+                // Ignore:
+                //  Row is header
+                //  Id is not integer
+                ;
             }
         }
         // Validate output
         if ( code[0].equals("") || code[1].equals("")) {
-            throw new Exception("Input IDs invalid!");
+            throw new Exception("Invalid input IDs or invalid CSV!");
         }
         // Return codes
         return code;

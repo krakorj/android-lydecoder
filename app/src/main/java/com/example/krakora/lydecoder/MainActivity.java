@@ -41,7 +41,13 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Hide keyboards
+                // Check inputs filled
+                if (codeText.getText().toString().trim().length() < 3 ||
+                        passText.getText().toString().trim().length() < 3) {
+                    outputText.setText("I like to move it :)");
+                    return;
+                }
+                    // Hide keyboards
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                 // Process file decoding
                 String output = ".";
@@ -53,9 +59,11 @@ public class MainActivity extends AppCompatActivity {
                     // pass
                 }
                 // Present it
-                Snackbar.make(view, "Button clicked, process ..." + output + " done!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
                 outputText.setText(output);
+                // Reset code & password
+                codeText.setText("");
+                codeText.requestFocus();
+                passText.setText("");
             }
             }
         );
