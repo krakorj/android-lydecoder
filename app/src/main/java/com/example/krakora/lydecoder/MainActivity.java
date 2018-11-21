@@ -2,6 +2,7 @@ package com.example.krakora.lydecoder;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.InputStream;
@@ -36,6 +38,27 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Progress bar
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        // Timer
+        final CountDownTimer countDownTimer;
+        final long msInFuture = 20000;
+        final int countDownInterval = 100;
+        // Output text timer
+        countDownTimer = new CountDownTimer(msInFuture, countDownInterval) {
+            @Override
+            public void onTick(long l) {
+                progressBar.setMax((int) msInFuture/countDownInterval);
+                progressBar.setProgress((int) l/countDownInterval);
+            }
+
+            @Override
+            public void onFinish() {
+                outputText.setText("I like to move it :)");
+            }
+        };
+
         // Process button
         ImageButton button = (ImageButton) findViewById(R.id.processButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -56,10 +79,11 @@ public class MainActivity extends AppCompatActivity {
                     Decoder d = new Decoder(codeText.getText().toString(), passText.getText().toString(), ins);
                     output = d.decode();
                 } catch (Exception e) {
-                    // pass
+                    // Ignore
                 }
                 // Present it
                 outputText.setText(output);
+                countDownTimer.start();
                 // Reset code & password
                 codeText.setText("");
                 codeText.requestFocus();
